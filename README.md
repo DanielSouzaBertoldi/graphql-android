@@ -6,10 +6,10 @@ For the backend, I'll be using _Node_, _GraphQL.js_, _Express_, _MongoDB_ and _A
 
 ### Links
 [Graph QL & Apollo with Android Course](https://www.udemy.com/course/graphql-with-android-from-novice-to-expert/ "Udemy Course")
-[Node.js](https://nodejs.org/en/ "Node.js")
-[GraphQL.js](https://graphql.org/graphql-js/ "GraphQL.js")
-[Express.js](https://expressjs.com/ "Express.js")
-[MongoDB](https://www.mongodb.com/ "MongoDB")
-[Apollo](https://www.apollographql.com/ "Apollo")
-[Lodash](https://lodash.com/ "Lodash")
+[Node.js](https://nodejs.org/en/ "Node.js")  
+[GraphQL.js](https://graphql.org/graphql-js/ "GraphQL.js")  
+[Express.js](https://expressjs.com/ "Express.js")  
+[MongoDB](https://www.mongodb.com/ "MongoDB")  
+[Apollo](https://www.apollographql.com/ "Apollo")  
+[Lodash](https://lodash.com/ "Lodash")  
 [Express-GraphQL](https://github.com/graphql/express-graphql "Express-GraphQL")
