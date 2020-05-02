@@ -1,5 +1,5 @@
 const graphql = require('graphql')
-const _ = require('lodash');
+const _ = require('lodash')
 
 //Dummy data while we don't set up a database
 let usersData = [
@@ -118,6 +118,12 @@ const RootQuery = new GraphQLObjectType({
                 return _.find(usersData, {id: args.id}) //_ = lodash doing its work
             }
         },
+        users: {
+            type: GraphQLList(UserType),
+            resolve(parent) {
+                return usersData;
+            }
+        },
         hobby: {
             type: HobbyType,
             args: {
@@ -127,6 +133,12 @@ const RootQuery = new GraphQLObjectType({
                 return _.find(hobbiesData, {id: args.id})
             }
         },
+        hobbies: {
+            type: GraphQLList(HobbyType),
+            resolve(parent) {
+                return hobbiesData;
+            }
+        },
         post: {
             type: PostType,
             args: {
@@ -134,6 +146,12 @@ const RootQuery = new GraphQLObjectType({
             },
             resolve(parent, args) {
                 return _.find(postsData, {id: args.id})
+            }
+        },
+        posts: {
+            type: GraphQLList(PostType),
+            resolve(parent) {
+                return postsData;
             }
         }
     }
