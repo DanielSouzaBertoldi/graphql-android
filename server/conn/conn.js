@@ -1,5 +1,5 @@
 // const MongoClient = require('mongodb').MongoClient;
-const uri = "<yourmongodburi";
+const uri = "<yourmongodburi>";
 // const client = new MongoClient(uri, { useNewUrlParser: true });
 // client.connect(err => {
 //   const collection = client.db("test").collection("devices");
