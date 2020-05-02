@@ -1,6 +1,11 @@
 const graphql = require('graphql')
 const _ = require('lodash')
 
+const mongoose = require('mongoose')
+const User = require('../model/User')
+const Hobby = require('../model/Hobby')
+const Post = require('../model/Post')
+
 //Dummy data while we don't set up a database
 let usersData = [
     {id: '1', name: 'Bond', age: 35, profession: 'WESTERN Spy'},
@@ -45,6 +50,12 @@ const {
     GraphQLNonNull
 } = graphql
 
+let cleanFields = function(info) {
+    //This line will remove all optional fields that don't have any value to them.
+    for(let field in info) if(!info[field]) delete info[field]
+    return info
+}
+
 //Types, aka 'Tables'
 const UserType = new GraphQLObjectType({
     name: 'User',
@@ -57,13 +68,13 @@ const UserType = new GraphQLObjectType({
         posts: {
             type: GraphQLList(PostType),
             resolve(parent) {
-                return _.filter(postsData, {userID: parent.id})
+                return Post.find({userID: parent.id})
             }
         },
         hobbies: {
             type: GraphQLList(HobbyType),
             resolve(parent) {
-                return _.filter(hobbiesData, {userID: parent.id})
+                return Hobby.find({userID: parent.id})
             }
         }
     })
@@ -79,7 +90,7 @@ const HobbyType = new GraphQLObjectType({
         user: {
             type: UserType,
             resolve(parent) {
-                return _.find(usersData, {id: parent.userID})
+                return User.findById(parent.userID)
             }
         }
     })
@@ -95,7 +106,7 @@ const PostType = new GraphQLObjectType({
         user: {
             type: UserType,
             resolve(parent) {
-                return _.find(usersData, {id: parent.userID})
+                return User.findById(parent.userID)
             }
         }
     })
@@ -115,13 +126,13 @@ const RootQuery = new GraphQLObjectType({
             },
             resolve(parent, args) {
                 //Get and return data from the DB
-                return _.find(usersData, {id: args.id}) //_ = lodash doing its work
+                return User.findById(args.id)
             }
         },
         users: {
             type: GraphQLList(UserType),
             resolve(parent) {
-                return usersData;
+                return User.find({})
             }
         },
         hobby: {
@@ -130,13 +141,13 @@ const RootQuery = new GraphQLObjectType({
                 id: {type: GraphQLID}
             },
             resolve(parent, args) {
-                return _.find(hobbiesData, {id: args.id})
+                return Hobby.findById(args.id)
             }
         },
         hobbies: {
             type: GraphQLList(HobbyType),
             resolve(parent) {
-                return hobbiesData;
+                return Hobby.find({})
             }
         },
         post: {
@@ -145,13 +156,13 @@ const RootQuery = new GraphQLObjectType({
                 id: {type: GraphQLID}
             },
             resolve(parent, args) {
-                return _.find(postsData, {id: args.id})
+                return Post.findById(args.id)
             }
         },
         posts: {
             type: GraphQLList(PostType),
             resolve(parent) {
-                return postsData;
+                return Post.find({})
             }
         }
     }
@@ -164,18 +175,56 @@ const Mutation = new GraphQLObjectType({
         CreateUser: {
             type: UserType,
             args: {
-                // id: {type: GraphQLID}
+                // id: {type: GraphQLID} -- We don't need to pass and ID since Mongo handles that for us
                 name: {type: GraphQLNonNull(GraphQLString)},
                 age: {type: GraphQLNonNull(GraphQLInt)},
                 profession: {type: GraphQLString}
             },
             resolve(parent, args) {
-                let user = {
+                let user = new User({
+                    name: args.name,
+                    age: args.age,
+                    profession: args.profession
+                })
+                // Saving in BD
+                return user.save()
+            }
+        },
+        UpdateUser: {
+            type: UserType,
+            args: {
+                id: {type: GraphQLNonNull(GraphQLID)},
+                name: {type: GraphQLNonNull(GraphQLString)},
+                age: {type: GraphQLInt},
+                profession: {type: GraphQLString}
+            },
+            resolve(parent, args) {
+                let userData = {
                     name: args.name,
                     age: args.age,
                     profession: args.profession
                 }
-                return user
+
+                userData = cleanFields(userData)
+                
+                //The flag "new" returns the document with the updated values,
+                //not the old values
+                return User.findByIdAndUpdate(args.id, info, {new: true})
+            }
+        },
+        DeleteUser: {
+            type: UserType,
+            args: { id: {type: GraphQLNonNull(GraphQLID)} },
+            resolve(parent, args) {
+                deletedUser = User.findByIdAndDelete(args.id);
+
+                //If we delete a user, then we need to delete all hobbies and posts
+                //associated with them.
+                //NOT WORKING, WHY???/????
+                Hobby.deleteMany({userID: mongoose.ObjectId(args.id)})
+                Post.deleteMany({userID: mongoose.ObjectId(args.id)})
+
+                return deletedUser
             }
         },
         CreatePost: {
@@ -185,11 +234,28 @@ const Mutation = new GraphQLObjectType({
                 userID: {type: GraphQLNonNull(GraphQLID)}
             },
             resolve(parent, args) {
-                let post = {
+                let post = new Post({
                     userID: args.userID,
                     comment: args.comment
-                }
-                return post
+                })
+                return post.save()
+            }
+        },
+        UpdatePost: {
+            type: PostType,
+            args: {
+                id: {type: GraphQLNonNull(GraphQLID)},
+                comment: {type: GraphQLNonNull(GraphQLString)}
+            },
+            resolve(parent, args) {
+                Post.findByIdAndUpdate(args.id, {comment: args.comment}, {new: true})
+            }
+        },
+        DeletePost: {
+            type: PostType,
+            args: { id: {type: GraphQLNonNull(GraphQLID)} },
+            resolve(parent, args) {
+                return Post.findByIdAndDelete(args.id)
             }
         },
         CreateHobby: {
@@ -200,12 +266,37 @@ const Mutation = new GraphQLObjectType({
                 userID: {type: GraphQLNonNull(GraphQLID)}
             },
             resolve(parent, args) {
-                let hobby = {
+                let hobby = new Hobby({
                     title: args.title,
                     description: args.description,
                     userID: args.userID
+                })
+                return hobby.save()
+            }
+        },
+        UpdateHobby: {
+            type: HobbyType,
+            args: {
+                id: {type: GraphQLNonNull(GraphQLString)},
+                title: {type: GraphQLNonNull(GraphQLString)},
+                description: {type: GraphQLString}
+            },
+            resolve(parent, args) {
+                let hobbyData = {
+                    title: args.title,
+                    description: args.description
                 }
-                return hobby;
+
+                hobbyData = cleanFields(hobbyData)
+
+                Hobby.findByIdAndUpdate(args.id, hobbyData, {new: true})
+            }
+        },
+        DeleteHobby: {
+            type: HobbyType,
+            args: { id: {type: GraphQLNonNull(GraphQLID)} },
+            resolve(parent, args) {
+                Hobby.findByIdAndDelete(args.id)
             }
         }
     }

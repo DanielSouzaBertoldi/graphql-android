@@ -5,7 +5,7 @@ const conn = require('./conn/conn')
 const mongoose = require('mongoose')
 
 //Removing deprecations with the following flags
-mongoose.connect(conn.uri, { useNewUrlParser: true,  useUnifiedTopology: true})
+mongoose.connect(conn.uri, { useNewUrlParser: true,  useUnifiedTopology: true, useFindAndModify: false})
 mongoose.connection.once('open', () => {
     console.log('Connected.')
 })
