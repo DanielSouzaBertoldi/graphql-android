@@ -1,0 +1,17 @@
+query GetUserQuery($userID: ID!) {
+    user(id: $userID) {
+        id
+        name
+        age
+        profession
+        posts {
+            id
+            comment
+        }
+        hobbies {
+            id
+            title
+            description
+        }
+    }
+}

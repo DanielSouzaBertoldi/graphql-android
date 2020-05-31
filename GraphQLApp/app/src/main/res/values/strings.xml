@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Graph QL App</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="hello_again">Hello again!</string>
+    <string name="result_users">Hello, %1$s!</string>
+    <string name="no_results_found">No results found :(</string>
+    <string name="title_activity_details">DetailsActivity</string>
+    <string name="user_name">%1$s</string>
+    <string name="user_age">Age: %1$d</string>
+    <string name="user_profession">Profession: %1$s</string>
+    <string name="type_of_info">%1$s</string>
+    <string name="info_name">%1$s</string>
+    <string name="no_hobbies_found">No hobbies available for this user.</string>
+    <string name="no_posts_found">No posts available for this user.</string>
+    <string name="title_activity_add_user">AddUserActivity</string>
+    <string name="add_user_name_placeholder">Name</string>
+    <string name="add_user_age_placeholder">Age</string>
+    <string name="add_user_profession_placeholder">Profession</string>
+    <string name="add_user_button_text">Add User</string>
+    <string name="add_user_post_placeholer">Add Post</string>
+    <string name="add_user_hobby_title_placeholder">Add Hobby Title</string>
+    <string name="add_user_hobby_desc_placeholder">Add Hobby Description</string>
+    <string name="add_user_post_and_hobby_text">Add Post and Hobby</string>
+    <string name="title_activity_update_user">UpdateUserActivity</string>
+    <string name="update_user_button_text">Update User</string>
+    <string name="title_activity_delete_user">DeleteUserActivity</string>
+    <string name="delete_user_text">Are you sure you want to delete this user?</string>
+    <string name="delete_user_text_yes">Yes</string>
+    <string name="delete_user_text_no">No</string>
+</resources>
