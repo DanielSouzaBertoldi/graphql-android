@@ -209,7 +209,7 @@ const Mutation = new GraphQLObjectType({
                 
                 //The flag "new" returns the document with the updated values,
                 //not the old values
-                return User.findByIdAndUpdate(args.id, info, {new: true})
+                return User.findByIdAndUpdate(args.id, {new: true})
             }
         },
         DeleteUser: {
